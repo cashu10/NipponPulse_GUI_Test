@@ -15,6 +15,7 @@ public:
     static HID_Commander* instance();
     
     Q_INVOKABLE QString getFirmwareVerisonByIndex(int index);
+    Q_INVOKABLE QString sendMessageToIndex(int index, QString message);
     Q_INVOKABLE int getNumberOfDevices();
     Q_INVOKABLE QString getDeviceNameByIndex(int index);
     Q_INVOKABLE bool openDeviceByIndex(int index);

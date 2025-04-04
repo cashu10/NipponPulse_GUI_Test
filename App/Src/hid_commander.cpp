@@ -77,11 +77,18 @@ HID_Commander* HID_Commander::instance()
 
 QString HID_Commander::getFirmwareVerisonByIndex(int index)
 {
+    return sendMessageToIndex(index, GET_FIRMWARE_VERSION);;
+}
+
+QString HID_Commander::sendMessageToIndex(int index, QString message)
+{
     if(openDeviceByIndex(index)) {
         char reply[256] = {0};
         char command[256] = {0};
-        strncpy(command, GET_FIRMWARE_VERSION, sizeof(command) - 1);
+        strncpy(command, message.toUtf8().data(), sizeof(command) - 1);
         sendReceiveCommanderHID(m_hDevice, command, reply);
+        qDebug() << "Command sent:" << command;
+        closeActiveDevice();
         return QString(reply);
     }
 
@@ -136,6 +143,7 @@ bool HID_Commander::closeActiveDevice()
     if (m_hDevice != NULL && m_hDevice != INVALID_HANDLE_VALUE) {
         closeCommanderHID(m_hDevice);
         m_hDevice = NULL;
+        qDebug() << "Device closed successfully:" << m_deviceList[m_activeDeviceIndex];
         return true;
     }
 

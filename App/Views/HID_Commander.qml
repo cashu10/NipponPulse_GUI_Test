@@ -4,7 +4,7 @@ import "../Components"
 import HIDCommander 1.0
 
 Item {
-    property string firmwareVersion: "no device found"
+    property string popupTextMessage: "no device found"
     id: page
 
     Column {
@@ -13,15 +13,18 @@ Item {
         width: parent.width * .9
         anchors.horizontalCenter: parent.horizontalCenter
 
-        Item {
+        Column {
             height: parent.height * .75
             width: parent.width
+            spacing: 10
+            padding: 20
             Row {
-                height: parent.height
+                height: deviceList.height
                 width: parent.width
                 spacing: 10
 
                 Text {
+                    width: parent.width * .2
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Connected Devices:"
                 }
@@ -29,7 +32,7 @@ Item {
                 ComboBox {
                     id: deviceList
                     height: 20
-                    width: 300
+                    width: parent.width * .4
                     model: HIDCommander.deviceList
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -37,20 +40,51 @@ Item {
                 Button {
                     id: getFirmwareButton
                     height: 20
-                    width: 100
+                    width: parent.width * .2
                     enabled: deviceList.model !== undefined && deviceList.model.length > 0
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Get Firmware"
                     onClicked: {
                         console.debug("Clicked, get firmware")
-                        page.firmwareVersion = HIDCommander.getFirmwareFromIndex(deviceList.currentIndex);
+                        page.popupTextMessage = HIDCommander.getFirmwareFromIndex(deviceList.currentIndex);
+                        popUp.visible = true;
+                    }
+                }
+            }
+
+            Row {
+                height: messageInput.height
+                width: parent.width
+                spacing: 10
+
+                Text {
+                    width: parent.width * .2
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Send message:"
+                }
+
+                TextField {
+                    id: messageInput
+                    height: 20
+                    width: parent.width * .4
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Button {
+                    id: sendMessageButton
+                    height: 20
+                    width: parent.width * .2
+                    enabled: deviceList.model !== undefined && deviceList.model.length > 0
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Send Message"
+                    onClicked: {
+                        console.debug("Clicked, send message")
+                        page.popupTextMessage = HIDCommander.sendMessageToIndex(deviceList.currentIndex, messageInput.text);
                         popUp.visible = true;
                     }
                 }
             }
         }
-
-
 
         Column {
             property int textWidth: 100
@@ -99,8 +133,8 @@ Item {
     Popup {
         id: popUp
         visible: false
-        height: parent.height * .8
-        width: parent.width * .8
+        height: parent.height * .6
+        width: parent.width * .6
         anchors.centerIn: parent
         contentItem: Rectangle {
             anchors.fill: parent
@@ -108,7 +142,7 @@ Item {
             Text {
                 id: popUpText
                 anchors.centerIn: parent
-                text: page.firmwareVersion
+                text: page.popupTextMessage
             }
             Button {
                 id: confirmButton

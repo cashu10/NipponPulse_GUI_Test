@@ -1,4 +1,5 @@
 import QtQuick
+import HIDCommander 1.0
 
 Window {
     width: 640
@@ -13,6 +14,17 @@ Window {
         anchors.right: parent.right
         height: 50
         color: "lightGray"
+
+        Rectangle {
+            id: connectionStatus
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height / 2
+            width: height
+            radius: height / 2
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            color: HIDCommander.deviceList.length > 0 ? "green" : "red"
+        }
 
         Row {
             height: parent.height
